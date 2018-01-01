@@ -1,0 +1,21 @@
+ // ==========================================================
+//  Report
+//  1) Generates a League Setup report with curent years divisional assignment.
+//  tournament / all star
+// ==========================================================
+ select sort_order, agegroup, teams.team_id, teams.teamname, teams.coachname, teams.email, teams.phone, teams.published, currentdivision, divclass,ts.division_name as 'lastdivision',tournament, allstarevent , wins, 
+ 		losses, ties, runs_scored, runs_allowed, w_avgrundiff, l_avgrundiff, rpi 
+	from (
+				select dm.id, team_id as team_id, dm.teamname, dm.name as 'coachname', dm.published, address, dm.city, dm.state, dm.email, dm.phone, dm.cellphone, d.agegroup, 
+				    	d.name as 'currentdivision', divclass, tournament, allstarevent , d.sort_order 
+				from joom_jleague_divmap as dm, joom_jleague_division d, joom_jleague_teams t
+				where dm.season = 22 and dm.published = 1 
+					and dm.division_id = d.id
+					and dm.team_id = t.id
+	    ) as teams
+left join (
+	select * from joom_jleague_team_stats
+	where season = 20
+) as ts
+on teams.team_id = ts.teamid 
+order by sort_order, agegroup, teamname

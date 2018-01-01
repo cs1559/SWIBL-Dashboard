@@ -1,0 +1,17 @@
+                   	    <div id="canvas-wrapper" style="position: relative; margin: auto; height: 350px; width: 350px;">
+                                <canvas id="{tag:element-id}" width="400px" height="350px"></canvas>
+                                <script>
+                                var ctx = document.getElementById("{tag:element-id}").getContext('2d');
+                                var myChart = new Chart(ctx, {
+                                    type: 'line',
+                                    data: {
+                                        labels: [{tag:data-labels}],
+                                        datasets: [{
+                                            label: '{tag:dataset-label}',
+                                            data: [{tag:dataset-data}]
+                                        }]
+                                    }
+                                });
+                                </script>
+							</div>
+							<!-- canvas wrapper -->

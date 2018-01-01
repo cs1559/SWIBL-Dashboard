@@ -1,0 +1,30 @@
+
+CREATE TABLE `dashboard_stats` (
+  `seasonid` int(11) NOT NULL,
+  `season` varchar(8) NOT NULL,
+  `data_as_of` datetime NOT NULL,
+  `number_of_teams` int(11),
+  `number_of_divisions` int(11),
+  `number_of_games_scheduled` int(11),
+  `number_of_games_played` int(11),
+  `average_run_differential` decimal(10,5),
+  `average_roster_size` decimal(10,5)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `division_stats` (
+  `divisionid` int(11) NOT NULL,
+  `divisionname` varchar(30) NOT NULL, 
+  `agegroup` int(11) not null,
+  `sort_order` int(11) not null,
+  `seasonid` int(11) NOT NULL,
+  `season` varchar(8) NOT NULL,
+  `data_as_of` datetime NOT NULL,
+  `number_of_teams` int(11),
+  `number_of_games_scheduled` int(11),
+  `number_of_games_played` int(11),
+  `average_run_differential` decimal(10,5),
+  `total_players` int(11),
+  `average_roster_size` decimal(10,5)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+

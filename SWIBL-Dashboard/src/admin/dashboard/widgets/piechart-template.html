@@ -1,0 +1,45 @@
+                   	    <div id="canvas-wrapper" style="position: relative; margin: auto; height: 350px; width: 350px;">
+                                <canvas id="myChart" width="400px" height="350px"></canvas>
+                                <script>
+                                var ctx = document.getElementById("myChart").getContext('2d');
+                                var myChart = new Chart(ctx, {
+                                    type: 'pie',
+                                    data: {
+                                        labels: ["7U", "8U", "9U", "10U", "11U", "12U", "13U", "14U"],
+                                        datasets: [{
+                                            label: '# of teams',
+                                            data: [12, 19, 22, 25, 29, 30, 25, 19],
+                                            backgroundColor: [
+                                                '#ff0000',
+                                                '#0000ff',
+                                                '#3cb371',
+                                                '#ee82ee',
+                                                '#ffa500',
+                                                '#d9534f',
+                                                '#80dbca',
+                                                '#6a5acd'
+                                            ],
+                                            borderColor: [
+                                                '#000000',
+                                                '#000000',
+                                                '#000000',
+                                                '#000000',
+                                                '#000000',
+                                                '#000000',
+                                                '#000000',
+                                                '#000000'
+                                            ],
+                                            borderWidth: 1
+                                        }]
+                                    },
+                                    options: {
+                                    	cutoutPercentage: 25,
+                                    	responsive: true,
+                                    	legend: {
+                                        	position: 'bottom'
+                                    	}
+                                    }
+                                });
+                                </script>
+							</div>
+							<!-- canvas wrapper -->

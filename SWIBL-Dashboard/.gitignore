@@ -1,0 +1,7 @@
+/bin/
+/target/
+/vendor/
+/config.ini
+/.buildpath
+/.classpath
+/backup/

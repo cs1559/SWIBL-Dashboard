@@ -1,0 +1,57 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>SWIBL-Dashboard</groupId>
+	<artifactId>SWIBL-Dashboard</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+
+
+
+	<distributionManagement>
+		<repository>
+			<id>local.dir</id>
+			<name>Local Folder</name>
+			<url>file://C:\xampp\htdocs\swibl\games</url>
+		</repository>
+	</distributionManagement>
+
+	<build>
+		<sourceDirectory>C:\dev\Git-Repository\SWIBL-Dashboard\SWIBL-Dashboard\</sourceDirectory>
+		<scriptSourceDirectory>C:\Users\Admin\git\SWIBL-Dashboard\SWIBL-Dashboard\src\main\scripts</scriptSourceDirectory>
+		<testSourceDirectory>C:\Users\Admin\git\SWIBL-Dashboard\SWIBL-Dashboard\src\test\java</testSourceDirectory>
+		<outputDirectory>C:\xampp\htdocs\admin\dashboard</outputDirectory>
+		<testOutputDirectory>C:\xampp\htdocs\admin\dashboard</testOutputDirectory>
+
+		<plugins>
+
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.8</version>
+				<executions>
+
+					<execution>
+						<id>id.deploy.local</id>
+						<phase>install</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<echo>Build/Install Local phase</echo>
+								<copy todir="${project.build.testOutputDirectory}">
+									<fileset dir="${project.build.sourceDirectory}" />
+								</copy>
+							</target>
+						</configuration>
+					</execution>
+
+				</executions>
+			</plugin>
+
+
+		</plugins>
+	</build>
+
+
+	<packaging>pom</packaging>
+</project>

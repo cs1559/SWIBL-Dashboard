@@ -1,0 +1,46 @@
+select * from (
+SELECT soundex(concat(lastname,firstname)) as keyfld, lastname, firstname, teamid, d.name as divisionname, d.agegroup
+FROM joom_jleague_simple_roster r, joom_jleague_divmap dm, joom_jleague_division d
+WHERE dm.season = 20
+   and dm.team_id = r.teamid
+   and dm.season = r.season
+   and dm.division_id = d.id
+ )
+ where keyfld in (
+       select keyfld from (
+		select keyfld, count(*) from (
+			select soundex(concat(lastname,firstname)) as keyfld 
+			from joom_jleague_simple_roster r
+			where season = 20
+		) tmp1
+		group by keyfld
+		having count(*) > 1
+      ) tmp2
+)
+
+
+
+
+
+select * from (
+    SELECT soundex(concat(lastname,firstname)) as keyfld, lastname, firstname, teamid, t.name as teamname, d.name as divisionname, d.agegroup, d.sort_order
+    FROM joom_jleague_simple_roster r, joom_jleague_divmap dm, joom_jleague_division d, joom_jleague_teams t
+    WHERE dm.season = 20
+       and dm.team_id = r.teamid
+       and dm.season = r.season
+       and dm.division_id = d.id
+       and dm.team_id = t.id
+     ) tmptbl
+ where keyfld in (
+       select key1 from (
+		select key1, count(*) from (
+				select soundex(concat(lastname,firstname)) as key1 
+				from joom_jleague_simple_roster r
+				where season = 20
+			) tmp1
+		group by key1
+		having count(*) > 1
+      ) tmp2
+ )
+ and agegroup like '7%'
+order by sort_order, agegroup, divisionname

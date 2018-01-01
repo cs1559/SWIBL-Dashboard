@@ -1,0 +1,241 @@
+
+// INIT SEASON LEVEL STATS
+insert into swibl_dashboard.dashboard_stats (seasonid, season, data_as_of)
+	select id,title,now() from swibl_v1x1.joom_jleague_seasons where id = 20
+	
+
+// # of teams 
+update swibl_dashboard.dashboard_stats set number_of_teams = 
+	(select count(*) from swibl_v1x1.joom_jleague_divmap 
+		where season = 20 and published = 1)
+	where seasonid = 20
+	
+// # of divisions 
+update swibl_dashboard.dashboard_stats set number_of_divisions = 
+	(select count(*) from swibl_v1x1.joom_jleague_division
+		where season = 20 and published = 1 and parent_indicator =0)
+	where seasonid = 20
+	
+// # of scheduled games (1864)
+update swibl_dashboard.dashboard_stats set number_of_games_scheduled = 
+	(select count(*) from swibl_v1x1.joom_jleague_scores
+		where season = 20 and conference_game = "Y")
+	where seasonid = 20
+	
+// # of completed games (1864)
+update swibl_dashboard.dashboard_stats set number_of_games_played = 
+	(select count(*) from swibl_v1x1.joom_jleague_scores
+		where season = 20 and conference_game = "Y" and gamestatus = "C")
+	where seasonid = 20
+	
+	
+// calculate average run differential
+update swibl_dashboard.dashboard_stats set average_run_differential = 
+(
+select avg(win_diff) from 
+(
+SELECT id, hometeam_id as teamid,hometeam_score - awayteam_score win_diff, 0 loss_diff FROM swibl_v1x1.joom_jleague_scores
+where season = 20
+and (hometeam_score - awayteam_score) > 0
+and conference_game = 'Y'
+and gamestatus = 'C'
+union
+SELECT id, awayteam_id as teamid, awayteam_score - hometeam_score win_diff, 0 loss_diff FROM swibl_v1x1.joom_jleague_scores
+where season = 20
+and (awayteam_score - hometeam_score) > 0
+and conference_game = 'Y'
+and gamestatus = 'C'
+union
+SELECT id, awayteam_id as teamid, awayteam_score - hometeam_score win_diff, 0 loss_diff FROM swibl_v1x1.joom_jleague_scores
+where season = 20
+and (awayteam_score - hometeam_score) = 0
+and conference_game = 'Y'
+and gamestatus = 'C'
+) win1
+)
+where seasonid = 20	
+	
+	
+	
+//  COUNT # OF TEAMS PER DIVISION
+	select division_id, d.name,  d.sort_order, d.agegroup, count(team_id) total_teams 
+	from joom_jleague_divmap dm, joom_jleague_division d
+		where dm.season = 20
+			and dm.division_id = d.id
+			and dm.published = 1 
+		group by division_id, d.name, d.sort_order, d.agegroup
+		order by d.sort_order
+		
+		
+//  COUNT # OF TEAMS PER SEASON, AGE GROUP FOR A GIVEN SEASON
+	select dm.season, s.title, d.agegroup, count(team_id) total_teams 
+	from joom_jleague_divmap dm, joom_jleague_division d, joom_jleague_seasons s
+		where dm.division_id = d.id
+			and dm.published = 1 
+			and dm.season = s.id
+			and dm.season = {season}
+		group by dm.season, s.title, d.agegroup
+		order by d.agegroup, s.title
+		
+		
+//  COUNT # OF TEAMS PER SEASON, AGE GROUP		
+	select dm.season, s.title, d.agegroup, count(team_id) total_teams 
+	from joom_jleague_divmap dm, joom_jleague_division d, joom_jleague_seasons s
+		where dm.division_id = d.id
+			and dm.published = 1 
+			and dm.season = s.id
+		group by dm.season, s.title, d.agegroup
+		order by d.agegroup, s.title
+		
+		
+// CALCULATE AVERAGE WIN DIFFERENTIAL BY DIVISION		
+select division_id, avg(win_diff) from 
+(
+	SELECT id, hometeam_id as teamid,division_id, hometeam_score - awayteam_score win_diff FROM swibl_v1x1.joom_jleague_scores
+	where season = 20
+	and (hometeam_score - awayteam_score) > 0
+	and conference_game = 'Y'
+	and gamestatus = 'C'
+	union
+	SELECT id, awayteam_id as teamid, division_id, awayteam_score - hometeam_score win_diff FROM swibl_v1x1.joom_jleague_scores
+	where season = 20
+	and (awayteam_score - hometeam_score) > 0
+	and conference_game = 'Y'
+	and gamestatus = 'C'
+	union
+	SELECT id, awayteam_id as teamid, division_id, awayteam_score - hometeam_score win_diff FROM swibl_v1x1.joom_jleague_scores
+	where season = 20
+	and (awayteam_score - hometeam_score) = 0
+	and conference_game = 'Y'
+	and gamestatus = 'C'
+) win1
+group by division_id
+
+
+
+
+// ========================================  UPDATE DIVISIONAL STATS TABLE ==========================================
+insert into swibl_dashboard.division_stats (divisionid, divisionname, seasonid, season, data_as_of)
+	select d.id, d.name, s.id, s.title,now() 
+	from swibl_v1x1.joom_jleague_division d, swibl_v1x1.joom_jleague_seasons s 
+		where d.season = s.id 
+			and d.parent_indicator <> 1
+			and s.registrationonly <> 1
+		
+update swibl_dashboard.division_stats as ds set number_of_teams = 
+	(
+		select count(*) from swibl_v1x1.joom_jleague_divmap as dm
+			where published = 1 and ds.divisionid = dm.division_id and ds.seasonid = dm.season
+			group by division_id, season
+		    order by division_id, season
+	) 
+
+update swibl_dashboard.division_stats as ds set number_of_games_scheduled = 
+	(select count(*) from swibl_v1x1.joom_jleague_scores as scores
+		where conference_game = "Y" and ds.divisionid = scores.division_id and ds.seasonid = scores.season)
+	
+	
+	
+update swibl_dashboard.division_stats as ds set number_of_games_played = 
+	(select count(*) from swibl_v1x1.joom_jleague_scores as scores
+		where conference_game = "Y" and gamestatus = "C" and ds.divisionid = scores.division_id and ds.seasonid = scores.season)
+
+// UPDATE TOTAL PLAYERS
+update swibl_dashboard.division_stats as ds set total_players =
+(select total_players from
+	(
+		select season, division_id, sum(total_players) as total_players
+		from (
+		    select sr.teamid, dm.division_id, sr.season, count(*) total_players 
+			from swibl_v1x1.joom_jleague_simple_roster sr, swibl_v1x1.joom_jleague_divmap dm
+				where sr.teamid = dm.team_id
+					and sr.season = dm.season
+					and dm.published = 1 
+			group by sr.teamid, dm.division_id, sr.season
+			) as temp1
+		group by season, division_id
+	) as temp2
+	where ds.seasonid = temp2.season
+		and ds.divisionid = temp2.division_id
+)
+
+// UPDATE AVERAGE ROSTER SIZE
+update swibl_dashboard.division_stats as ds set average_roster_size =
+(select average_number_players from
+	(
+		select season, division_id, avg(total_players) as average_number_players
+		from (
+		    select sr.teamid, dm.division_id, sr.season, count(*) total_players 
+			from swibl_v1x1.joom_jleague_simple_roster sr, swibl_v1x1.joom_jleague_divmap dm
+				where sr.teamid = dm.team_id
+					and sr.season = dm.season
+					and dm.published = 1 
+			group by sr.teamid, dm.division_id, sr.season
+			) as temp1
+		group by season, division_id
+	) as temp2
+	where ds.seasonid = temp2.season
+		and ds.divisionid = temp2.division_id
+)
+
+
+// UPDATE AVERAGE RUN DIFFERENTIAL
+update swibl_dashboard.division_stats as ds set average_run_differential =
+(select average_run_differential from
+	(
+		select season, division_id, avg(win_diff) as average_run_differential from 
+		(
+			SELECT id, hometeam_id as teamid,season, division_id, hometeam_score - awayteam_score win_diff FROM swibl_v1x1.joom_jleague_scores
+			WHERE (hometeam_score - awayteam_score) > 0
+			and conference_game = 'Y'
+			and gamestatus = 'C'
+			union
+			SELECT id, awayteam_id as teamid, season, division_id, awayteam_score - hometeam_score win_diff FROM swibl_v1x1.joom_jleague_scores
+			WHERE (awayteam_score - hometeam_score) > 0
+			and conference_game = 'Y'
+			and gamestatus = 'C'
+			union
+			SELECT id, awayteam_id as teamid, season, division_id, awayteam_score - hometeam_score win_diff FROM swibl_v1x1.joom_jleague_scores
+			WHERE (awayteam_score - hometeam_score) = 0
+			and conference_game = 'Y'
+			and gamestatus = 'C'
+		) win1
+		group by season, division_id
+		ORDER BY SEASON, DIVISION_ID
+	) as temp2
+	where ds.seasonid = temp2.season
+		and ds.divisionid = temp2.division_id
+)
+
+
+
+	select dm.division_id, sr.season, count(*) total_players 
+	from joom_jleague_simple_roster sr, joom_jleague_divmap dm
+		where sr.teamid = dm.team_id
+			and sr.season = dm.season_id
+			and dm.published = 1 
+	
+// select total player count by team, division, season
+select season, division_id, sum(total_players) 
+from (
+    select sr.teamid, dm.division_id, sr.season, count(*) total_players 
+	from joom_jleague_simple_roster sr, joom_jleague_divmap dm
+		where sr.teamid = dm.team_id
+			and sr.season = dm.season
+			and dm.published = 1 
+	group by sr.teamid, dm.division_id, sr.season
+) as temp1
+group by season, division_id
+
+			
+			
+select season, division_id, avg(total_players) 
+from (
+    select sr.teamid, dm.division_id, sr.season, count(*) total_players 
+	from joom_jleague_simple_roster sr, joom_jleague_divmap dm
+		where sr.teamid = dm.team_id
+			and sr.season = dm.season
+			and dm.published = 1 
+	group by sr.teamid, dm.division_id, sr.season
+) as temp1
+group by season, division_id

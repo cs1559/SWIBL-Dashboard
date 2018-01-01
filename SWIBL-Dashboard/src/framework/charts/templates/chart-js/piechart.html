@@ -1,0 +1,26 @@
+                   	    <div id="canvas-wrapper" style="position: relative; margin: auto; height: 350px; width: 350px;">
+                                <canvas id="{tag:element-id}" width="400px" height="350px"></canvas>
+                                <script>
+                                var ctx = document.getElementById("{tag:element-id}").getContext('2d');
+                                var myChart = new Chart(ctx, {
+                                    type: 'pie',
+                                    data: {
+                                        labels: [{tag:data-labels}],
+                                        datasets: [{
+                                            label: '{tag:dataset-label}',
+                                            data: [{tag:dataset-data}],
+                                            backgroundColor: [{tag:dataset-backgroundcolor}],
+                                            borderWidth: 1
+                                        }]
+                                    },
+                                    options: {
+                                    	cutoutPercentage: 25,
+                                    	responsive: true,
+                                    	legend: {
+                                        	position: 'bottom'
+                                    	}
+                                    }
+                                });
+                                </script>
+							</div>
+							<!-- canvas wrapper -->

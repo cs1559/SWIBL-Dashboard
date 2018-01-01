@@ -1,0 +1,8 @@
+select team_id, division_id, dm.season, t.name, d.agegroup, t.coachname, t.coachemail, t.coachphone 
+from joom_jleague_divmap dm, joom_jleague_division d, joom_jleague_teams t
+where dm.season = 20 and dm.division_id = d.id
+and d.agegroup < 14
+and dm.team_id = t.id
+and team_id not in (
+select team_id from joom_jleague_divmap where season = 22 and team_id > 0) 
+order by d.agegroup
