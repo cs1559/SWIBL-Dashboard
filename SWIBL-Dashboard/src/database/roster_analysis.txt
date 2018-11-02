@@ -1,0 +1,64 @@
+CREATE TABLE `roster_analysis` (
+  `teamid` int(11) NOT NULL,
+  `teamname` varchar(30) NOT NULL, 
+  `coachname` varchar(30) not null,
+  `coachemail` varchar(80) not null,
+  `divisionid` int(11) NOT NULL,
+  `divisionname` varchar(30) NOT NULL, 
+  `agegroup` int(11) not null,
+  `sort_order` int(11) not null,
+  `data_as_of` datetime NOT NULL,
+  `total_players` int(11),
+  `total_substitute` int(11),
+  `missing_emails` int(11),
+  `max_email_ind` int(11),
+  `status_code` int(11),
+  `status` varchar(30)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+delete from roster_analysis where 1=1;
+insert into roster_analysis
+	select team_id as teamid, t.name as 'teamname', t.coachname as 'coachname', t.coachemail as 'coachemail', d.id as 'divisionid', 
+		d.name as 'divisionname', d.agegroup as 'agegroup', d.sort_order as 'sort_order', null, 0,0,0,0,0,''
+				from swibl_v1.joom_jleague_divmap as dm, swibl_v1.joom_jleague_division d, swibl_v1.joom_jleague_teams t
+				where dm.season = 22 and dm.published = 1 
+					and dm.division_id = d.id
+					and dm.team_id = t.id;
+		 
+		 
+		 
+update swibl_dashboard.roster_analysis as ra set total_players = 
+	(
+		select count(*) from swibl_v1.joom_jleague_simple_roster as sr
+			where ra.teamid = sr.teamid
+				and season = 22
+				and classification = "P"
+			group by teamid
+		    order by teamid
+	) ;
+	
+update swibl_dashboard.roster_analysis as ra set total_substitute = 
+	(
+		select count(*) from swibl_v1.joom_jleague_simple_roster as sr
+			where ra.teamid = sr.teamid
+				and season = 22
+				and classification = "S"
+			group by teamid
+		    order by teamid
+	) ;
+	
+update swibl_dashboard.roster_analysis as ra set missing_emails = 
+	(
+		select 1 from swibl_v1.joom_jleague_simple_roster as sr
+			where ra.teamid = sr.teamid
+				and season = 22
+				and email = ""
+			group by teamid
+		    order by teamid
+	) ;
+	
+	
+	
+		

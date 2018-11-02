@@ -1,0 +1,86 @@
+         select teamid, season, sum(regular) as regular, sum(substitute) as substitute, sum(total_players) as total_players, sum(emailcount) as emailcount
+         from (
+        	select teamid, season, sum(regular) as regular, sum(substitute) as substitute, sum(total_players) as total_players, 0 as emailcount
+        	from (
+        		SELECT teamid, season,if(classification='P',1,0) as regular, if(classification='S',1,0) as substitute, 1 as total_players
+        		FROM swibl_v1.joom_jleague_simple_roster
+        		WHERE season = 22
+        	) as temp1
+            group by teamid, season
+            UNION
+            select teamid, season, 0 as regular, 0 as substitute, 0 as total_players, emailcount
+            from (
+        	    select season, teamid, email, count(*) AS EMAILCOUNT
+        		FROM swibl_v1.joom_jleague_simple_roster
+        			WHERE
+        				SEASON =22 and email <> ''
+        			GROUP BY SEASON, TEAMID, email
+        			HAVING EMAILCOUNT > 3
+                ) as temp2
+        ) as mainsubselect	
+            group by teamid, season 
+ 	
+ 	
+ 	
+ 	
+	select temp1.teamid, temp1.season, sum(regular) as regular, sum(substitute) as substitute, sum(total_players) as total_players, emailcount
+	from (
+		SELECT teamid, season,if(classification='P',1,0) as regular, if(classification='S',1,0) as substitute, 1 as total_players
+		FROM swibl_v1.joom_jleague_simple_roster
+		WHERE season = 22
+	) as temp1,
+    (
+	    select season, teamid, email, count(*) AS EMAILCOUNT
+		FROM joom_jleague_simple_roster
+		WHERE
+			SEASON = 22 
+		GROUP BY SEASON, TEAMID, email
+		HAVING EMAILCOUNT > 3
+    ) as temp2
+    where temp1.teamid = temp2.teamid
+        and temp1.season = temp2.season 	
+ 	
+ 	
+ 	
+ 	
+ select teamid, season, sum(regular) as regular, sum(substitute) as substitute, sum(total_players) as total_players, sum(emailcount) as emailcount
+ from (
+	select teamid, season, sum(regular) as regular, sum(substitute) as substitute, sum(total_players) as total_players, 0 as emailcount
+	from (
+		SELECT teamid, season,if(classification='P',1,0) as regular, if(classification='S',1,0) as substitute, 1 as total_players
+		FROM swibl_v1.joom_jleague_simple_roster
+		WHERE season = 22
+	) as temp1
+    group by teamid, season
+    UNION
+    select teamid, season, 0 as regular, 0 as substitute, 0 as total_players, emailcount
+    from (
+	    select season, teamid, email, count(*) AS EMAILCOUNT
+		FROM joom_jleague_simple_roster
+			WHERE
+				SEASON = 22 
+			GROUP BY SEASON, TEAMID, email
+			HAVING EMAILCOUNT > 3
+        ) as temp2
+) as mainsubselect	
+    group by teamid, season 	
+ 	
+ 	
+ 	
+ 	
+ 	
+ 	
+ 	
+ 	
+ 	
+ 	
+ 	
+ 	
+ 	
+ 	
+ 	
+ 	
+ 	
+ 	
+ 	
+ 	
