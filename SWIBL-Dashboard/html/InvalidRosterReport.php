@@ -36,11 +36,16 @@ $this->layout('Layout', [
     $tooFewPlayers = 0;
     $goodrosters = 0;
     $missingRoster = 0;
+    $toomanyemails = 0;
     
     foreach ($data as $d) {
         $cnt = $cnt + 1;
         $status = "OK";
         $code = 0;
+        if (($d->emailcount) > 0) {
+            $status = "Errors with # of emails listed (" . $d->emailcount . ")";
+            $code = 6;
+        }
         if (($d->regular + $d->substitute) > 15) {
             $status = "Too many PLAYERS on roster";
             $code = 1;
@@ -61,6 +66,7 @@ $this->layout('Layout', [
             $status = "Missing Roster";
             $code = 5;
         }
+
         
         switch ($code) {
             case 0:
@@ -80,6 +86,9 @@ $this->layout('Layout', [
                 break;
             case 5:
                 $missingRoster = $missingRoster + 1;
+                break;
+            case 6:
+                $toomanyemails = $toomanyemails + 1;
                 break;
             default:
                 $goodrosters = $goodrosters + 1;
@@ -109,6 +118,7 @@ $this->layout('Layout', [
 			Total TOO MANY PLAYERS: <?= $tooManyPlayers ?><br/>
 			Total TOO MANY REGULARS: <?= $tooManyRegulars ?><br/>
 			Total TOO MANY SUBSTITUTES: <?= $tooManySubs ?><br/>
+			Total TOO MANY SAME EMAILS LISTED: <?= $toomanyemails ?><br/>
 			Total GOOD ROSTERS: <?= $goodrosters ?><br/>
 			<br/>
 			Total Teams Listed: <?= $cnt; ?><br>

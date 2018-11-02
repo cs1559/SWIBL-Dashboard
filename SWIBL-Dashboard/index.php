@@ -45,6 +45,7 @@ $config = [
 ];
 
 $app = new \Slim\App($c);
+$app->
 // $app->add(new OAuthRequestAuthorizer());
 
 

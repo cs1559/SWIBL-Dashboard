@@ -1,5 +1,6 @@
 <?php 
     $base_url = "/admin/dashboard";
+    $useCDN = true;
 ?>
 <!DOCTYPE html>
 <html>
@@ -16,13 +17,24 @@
 	<link rel="shortcut icon" href="<?= $base_url; ?>/html/favicon.ico" type="image/x-icon">
    
      <!-- Bootstrap Core CSS -->
-   <!--  <link href="<?= $base_url; ?>/html/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">   -->
-   <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+     <?php 
+        if ($useCDN) {
+     ?>
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+     <?php } else { ?>
+        <link href="<?= $base_url; ?>/backup/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">   
+     <?php } ?>
+
 
     <!-- MetisMenu CSS -->
-    <!--  <link href="<?= $base_url; ?>/html/bower_components/metisMenu/dist/metisMenu.min.css" rel="stylesheet">   -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/metisMenu/2.7.2/metisMenu.min.css" rel="stylesheet">
-
+    <?php 
+        if ($useCDN) {
+     ?>
+	    <link href="https://cdnjs.cloudflare.com/ajax/libs/metisMenu/2.7.2/metisMenu.min.css" rel="stylesheet">
+	<?php } else { ?>
+	    <link href="<?= $base_url; ?>/backup/bower_components/metisMenu/dist/metisMenu.min.css" rel="stylesheet">  
+     <?php } ?>
+     
     <!-- Timeline CSS -->
     <link href="<?= $base_url; ?>/html/css/timeline.css" rel="stylesheet">
 
@@ -31,8 +43,17 @@
     <link href="<?= $base_url; ?>/html/css/dashboard.css" rel="stylesheet">
 
     <!-- Custom Fonts -->
-    <!-- <link href="<?= $base_url; ?>/html/bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+     <?php
+    if ($useCDN) {
+        ?>
+<link
+	href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+	rel="stylesheet" type="text/css">
+<?php } else { ?>
+<link
+	href="<?= $base_url; ?>/backup/bower_components/font-awesome/css/font-awesome.min.css"
+	rel="stylesheet" type="text/css">
+<?php } ?>
     
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -61,9 +82,11 @@
                     <span class="icon-bar"></span>
                 </button>
                 <a class="navbar-brand" href="<?= $base_url; ?>/">SWIBL - Admin Dashboard</a>
+
             </div>
             <!-- /.navbar-header -->
 
+                
              <div class="navbar-default sidebar" role="navigation">
                 <div class="sidebar-nav navbar-collapse collapse">
                     <ul class="nav" id="side-menu">
@@ -171,26 +194,38 @@
 
     </div>
     <!-- /#wrapper -->
-    
-    
-    <!-- jQuery -->
-   <!--  <script src="<?= $base_url; ?>/html/bower_components/jquery/dist/jquery.min.js"></script>   -->
+
+
+	<!-- jQuery -->
+	<?php if ($useCDN) { ?>
+	<script src="https://code.jquery.com/jquery-2.2.4.min.js"
+		integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+		crossorigin="anonymous"></script>
+	<?php } else { ?>
 	<script
-			  src="https://code.jquery.com/jquery-2.2.4.min.js"
-			  integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
-			  crossorigin="anonymous"></script>
-			  
-    <!-- Bootstrap Core JavaScript -->
-    <!-- <script src="<?= $base_url; ?>/html/bower_components/bootstrap/dist/js/bootstrap.min.js"></script> -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+		src="<?= $base_url; ?>/backup/bower_components/jquery/dist/jquery.min.js"></script>
+	<?php } ?>
 
-    <!-- Metis Menu Plugin JavaScript -->
-    <!--  <script src="<?= $base_url; ?>/html/bower_components/metisMenu/dist/metisMenu.min.js"></script> -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/metisMenu/2.7.2/metisMenu.min.js"></script>
+	<!-- Bootstrap Core JavaScript -->
+	<?php if ($useCDN) { ?>
+	<script
+		src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<?php } else { ?>
+	<script
+		src="<?= $base_url; ?>/backup/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+	<?php } ?>
 
+	<!-- Metis Menu Plugin JavaScript -->
+	<?php if ($useCDN) { ?>
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/metisMenu/2.7.2/metisMenu.min.js"></script>
+	<?php } else { ?>
+	<script
+		src="<?= $base_url; ?>/backup/bower_components/metisMenu/dist/metisMenu.min.js"></script>
+	<?php } ?>
+    
     <!-- Custom Theme JavaScript -->
-    <!-- <script src="<?= $base_url; ?>/html/js/sb-admin-2.js"></script>   -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/metisMenu/2.7.2/metisMenu.min.js"></script>
+	<script src="<?= $base_url; ?>/html/js/sb-admin-2.js"></script>    
 
 </body>
 </html>

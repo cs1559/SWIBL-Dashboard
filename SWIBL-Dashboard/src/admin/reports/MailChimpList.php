@@ -13,9 +13,23 @@ class MailChimpList extends Report implements CSVReportInterface {
     
     var $list="default";
     var $queryStr = "";
-    var $coachQuery =
-    "select * from
-    (
+    /*
+     *         
+     *         
+        SELECT email, split_str(d1.name,' ',1) as fname, split_str(d2.name,' ',2) as lname, phone, city, upper(state) as state, d2.name as "division_name", s1.title as "season" from swibl_v1.joom_jleague_divmap as d1, swibl_v1.joom_jleague_division as d2, swibl_v1.joom_jleague_seasons as s1
+        where d1.season = 22
+           and d1.division_id = d2.id
+	   and d1.season = s1.id
+	   union
+	   SELECT tc1.email, split_str(tc1.name,' ',1) as fname, split_str(tc1.name,' ',2) as lname, ' ' as phone, '' as city, '' as state, d2.name as "division_name", s1.title as "season" 
+from swibl_v1.joom_jleague_teamcontacts as tc1, swibl_v1.joom_jleague_divmap as d1, swibl_v1.joom_jleague_division as d2, swibl_v1.joom_jleague_seasons as s1
+        where d1.season = 22
+	   and tc1.teamid = d1.team_id
+           and d1.division_id = d2.id
+	   and d1.season = s1.id
+
+
+
         SELECT email, split_str(name,' ',1) as fname, split_str(name,' ',2) as lname, phone, city, upper(state) as state from swibl_v1.joom_jleague_divmap
         where season = {SEASONID}
         union
@@ -23,6 +37,25 @@ class MailChimpList extends Report implements CSVReportInterface {
         where teamid in (
             select team_id from swibl_v1.joom_jleague_divmap where season = {SEASONID}
             )
+        ) as tmp1
+        
+
+     * 
+     */
+    var $coachQuery =
+    "select * from
+    (
+        SELECT email, split_str(d1.name,' ',1) as fname, split_str(d2.name,' ',2) as lname, phone, city, upper(state) as state, d2.name as 'division_name', s1.title as 'season' from swibl_v1.joom_jleague_divmap as d1, swibl_v1.joom_jleague_division as d2, swibl_v1.joom_jleague_seasons as s1
+        where d1.season = {SEASONID}
+           and d1.division_id = d2.id
+	       and d1.season = s1.id
+	   union
+	   SELECT tc1.email, split_str(tc1.name,' ',1) as fname, split_str(tc1.name,' ',2) as lname, ' ' as phone, '' as city, '' as state, d2.name as 'division_name', s1.title as 'season' 
+            from swibl_v1.joom_jleague_teamcontacts as tc1, swibl_v1.joom_jleague_divmap as d1, swibl_v1.joom_jleague_division as d2, swibl_v1.joom_jleague_seasons as s1
+            where d1.season =  {SEASONID}
+	           and tc1.teamid = d1.team_id
+               and d1.division_id = d2.id
+	           and d1.season = s1.id
         ) as tmp1
         where length(email)>0
         and LOCATE(';', email) <= 0
@@ -92,7 +125,7 @@ class MailChimpList extends Report implements CSVReportInterface {
     private function formatDefault() {
         $output = "";
         // email, fname, lname, phone, city, state
-        $headerRow = "email,fname,lname,phone,city,state";
+        $headerRow = "email,fname,lname,phone,city,state,season,division_name";
         $output = $output . $headerRow . "\r\n";
         
         // Build formatted rows.
@@ -103,7 +136,9 @@ class MailChimpList extends Report implements CSVReportInterface {
                 $row->lname,
                 $row->phone,
                 $row->city,
-                $row->state
+                $row->state,
+                $row->season,
+                $row->division_name
             );
             $csv = implode(",", $tmp);
             $output = $output . $csv . PHP_EOL;

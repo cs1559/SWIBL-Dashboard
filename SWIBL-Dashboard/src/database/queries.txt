@@ -6,27 +6,27 @@ insert into swibl_dashboard.dashboard_stats (seasonid, season, data_as_of)
 
 // # of teams 
 update swibl_dashboard.dashboard_stats set number_of_teams = 
-	(select count(*) from swibl_v1x1.joom_jleague_divmap 
-		where season = 20 and published = 1)
-	where seasonid = 20
+	(select count(*) from swibl_v1.joom_jleague_divmap 
+		where season = 22 and published = 1)
+	where seasonid = 22
 	
 // # of divisions 
 update swibl_dashboard.dashboard_stats set number_of_divisions = 
-	(select count(*) from swibl_v1x1.joom_jleague_division
-		where season = 20 and published = 1 and parent_indicator =0)
-	where seasonid = 20
+	(select count(*) from swibl_v1.joom_jleague_division
+		where season = 22 and published = 1 and parent_indicator =0)
+	where seasonid = 22
 	
 // # of scheduled games (1864)
 update swibl_dashboard.dashboard_stats set number_of_games_scheduled = 
-	(select count(*) from swibl_v1x1.joom_jleague_scores
-		where season = 20 and conference_game = "Y")
-	where seasonid = 20
+	(select count(*) from swibl_v1.joom_jleague_scores
+		where season = 22 and conference_game = "Y")
+	where seasonid = 22
 	
 // # of completed games (1864)
 update swibl_dashboard.dashboard_stats set number_of_games_played = 
-	(select count(*) from swibl_v1x1.joom_jleague_scores
-		where season = 20 and conference_game = "Y" and gamestatus = "C")
-	where seasonid = 20
+	(select count(*) from swibl_v1.joom_jleague_scores
+		where season = 22 and conference_game = "Y" and gamestatus = "C")
+	where seasonid = 22
 	
 	
 // calculate average run differential
@@ -34,26 +34,26 @@ update swibl_dashboard.dashboard_stats set average_run_differential =
 (
 select avg(win_diff) from 
 (
-SELECT id, hometeam_id as teamid,hometeam_score - awayteam_score win_diff, 0 loss_diff FROM swibl_v1x1.joom_jleague_scores
-where season = 20
+SELECT id, hometeam_id as teamid,hometeam_score - awayteam_score win_diff, 0 loss_diff FROM swibl_v1.joom_jleague_scores
+where season = 22
 and (hometeam_score - awayteam_score) > 0
 and conference_game = 'Y'
 and gamestatus = 'C'
 union
-SELECT id, awayteam_id as teamid, awayteam_score - hometeam_score win_diff, 0 loss_diff FROM swibl_v1x1.joom_jleague_scores
-where season = 20
+SELECT id, awayteam_id as teamid, awayteam_score - hometeam_score win_diff, 0 loss_diff FROM swibl_v1.joom_jleague_scores
+where season = 22
 and (awayteam_score - hometeam_score) > 0
 and conference_game = 'Y'
 and gamestatus = 'C'
 union
-SELECT id, awayteam_id as teamid, awayteam_score - hometeam_score win_diff, 0 loss_diff FROM swibl_v1x1.joom_jleague_scores
-where season = 20
+SELECT id, awayteam_id as teamid, awayteam_score - hometeam_score win_diff, 0 loss_diff FROM swibl_v1.joom_jleague_scores
+where season = 22
 and (awayteam_score - hometeam_score) = 0
 and conference_game = 'Y'
 and gamestatus = 'C'
 ) win1
 )
-where seasonid = 20	
+where seasonid = 22	
 	
 	
 	

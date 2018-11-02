@@ -11,6 +11,7 @@ CREATE TABLE `dashboard_stats` (
   `average_roster_size` decimal(10,5)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+
 CREATE TABLE `division_stats` (
   `divisionid` int(11) NOT NULL,
   `divisionname` varchar(30) NOT NULL, 
@@ -27,4 +28,22 @@ CREATE TABLE `division_stats` (
   `average_roster_size` decimal(10,5)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+
+CREATE TABLE `roster_analysis` (
+  `teamid` int(11) NOT NULL,
+  `teamname` varchar(30) NOT NULL, 
+  `coachname` varchar(30) not null,
+  `coachemail` varchar(80) not null,
+  `divisionid` int(11) NOT NULL,
+  `divisionname` varchar(30) NOT NULL, 
+  `agegroup` int(11) not null,
+  `sort_order` int(11) not null,
+  `data_as_of` datetime NOT NULL,
+  `total_players` int(11),
+  `total_substitute` int(11),
+  `missing_emails` int(11),
+  `max_email_ind` int(11),
+  `status_code` int(11),
+  `status` varchar(30)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
